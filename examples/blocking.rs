@@ -1,12 +1,15 @@
 //! `cargo run --example blocking`
 #![deny(warnings)]
+use std::env;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     env_logger::init();
 
-    println!("GET https://www.rust-lang.org");
+    let url = format!("http://{}", env::args().skip(1).next().expect("No URL provided"));
 
-    let mut res = reqwest::blocking::get("https://www.rust-lang.org/")?;
+    println!("GET {}", url);
+
+    let mut res = reqwest::blocking::get(url.as_str())?;
 
     println!("Status: {}", res.status());
     println!("Headers:\n{:?}", res.headers());
