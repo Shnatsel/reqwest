@@ -1,6 +1,7 @@
 //! `cargo run --example blocking`
 #![deny(warnings)]
 use std::env;
+use std::time::Duration;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     env_logger::init();
@@ -9,7 +10,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("GET {}", url);
 
-    let mut res = reqwest::blocking::get(url.as_str())?;
+    let client = reqwest::blocking::Client::builder()
+        .timeout(Duration::from_secs(5))
+        .build()?;
+
+    let mut res = client.get(url.as_str()).send()?;
 
     println!("Status: {}", res.status());
     println!("Headers:\n{:?}", res.headers());
